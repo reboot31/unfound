@@ -1,0 +1,119 @@
+@import "tailwindcss";
+
+/* ── Unfound tokens ─────────────────────────────────────────────
+   Neutrals + one colour (deep spruce). No gradients, no tints. */
+:root {
+  color-scheme: light;
+  --paper: #f6f6f3;
+  --paper-raised: #fffffe;
+  --ink: #16171a;
+  --ink-soft: #4c4e54;
+  --ink-faint: #8d8f95;
+  --rule: #e2e2dd;
+  --spruce: #1c4a44;
+  --spruce-ink: #f6f6f3;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-spruce: var(--spruce);
+
+  /* shadcn surface aliases */
+  --color-background: var(--paper);
+  --color-foreground: var(--ink);
+  --color-input: var(--rule);
+  --color-border: var(--rule);
+  --color-ring: var(--spruce);
+  --color-primary: var(--spruce);
+  --color-primary-foreground: var(--spruce-ink);
+  --color-secondary: var(--rule);
+  --color-secondary-foreground: var(--ink);
+  --color-muted: var(--rule);
+  --color-muted-foreground: var(--ink-faint);
+  --color-accent: var(--rule);
+  --color-accent-foreground: var(--ink);
+  --color-destructive: #8a2f1d;
+
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-display);
+  --font-mark: var(--font-mark);
+
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+}
+
+* {
+  border-color: var(--rule);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--spruce);
+  color: var(--spruce-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--spruce);
+  outline-offset: 3px;
+}
+
+/* Section eyebrow: small, tracked, quiet. */
+.eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+
+/* Scroll reveal — one fade, nothing else. */
+.reveal {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reveal[data-shown="true"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Hero: the dimmed half resolves, the way the wordmark does. */
+.resolve {
+  color: var(--ink-faint);
+  animation: resolve 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.5s forwards;
+}
+@keyframes resolve {
+  to {
+    color: var(--ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .resolve {
+    animation: none;
+    color: var(--ink);
+  }
+}
