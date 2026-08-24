@@ -1,9 +1,25 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "unfound",
-  "compatibility_date": "2026-08-25",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-08-24",
   "assets": {
     "directory": "./out",
+    "binding": "ASSETS",
     "not_found_handling": "404-page"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "unfound",
+      "database_id": "8be70f47-ad13-4030-98ad-a5f270e27d28"
+    }
+  ],
+  "vars": {
+    // Fill both in once Cloudflare Access is configured, then redeploy.
+    // While either is empty, /admin returns 404 to everyone.
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  },
+  "observability": { "enabled": true }
 }

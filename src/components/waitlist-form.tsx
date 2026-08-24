@@ -13,13 +13,37 @@ const FIELD =
 export function WaitlistForm() {
   const [intent, setIntent] = useState<Intent>("open");
   const [done, setDone] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const data = Object.fromEntries(new FormData(event.currentTarget));
-    // TODO: post { name, email, intent } to Tally / Formspree.
-    console.log({ ...data, intent });
-    setDone(true);
+    const form = new FormData(event.currentTarget);
+    setPending(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          name: form.get("name"),
+          email: form.get("email"),
+          intent,
+          company: form.get("company"),
+        }),
+      });
+      const result = (await response.json()) as { error?: string };
+      if (!response.ok) {
+        setError(result.error ?? "Something went wrong. Try again.");
+        return;
+      }
+      setDone(true);
+    } catch {
+      setError("Could not reach the server. Check your connection.");
+    } finally {
+      setPending(false);
+    }
   }
 
   if (done) {
@@ -35,7 +59,16 @@ export function WaitlistForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-10">
+    <form onSubmit={handleSubmit} className="space-y-10" noValidate>
+      {/* ponytail: honeypot. Real people never see or fill this. */}
+      <input
+        type="text"
+        name="company"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden
+        className="absolute left-[-9999px] h-px w-px opacity-0"
+      />
       <fieldset className="space-y-4">
         <legend className="eyebrow mb-4 text-white/45">
           Which side are you on
@@ -98,14 +131,21 @@ export function WaitlistForm() {
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         <Button
           type="submit"
-          className="h-12 rounded-sm bg-paper px-8 text-[0.9375rem] font-medium text-ink hover:bg-white"
+          disabled={pending}
+          className="h-12 rounded-sm bg-paper px-8 text-[0.9375rem] font-medium text-ink hover:bg-white disabled:opacity-60"
         >
-          Request an invitation
+          {pending ? "Sending" : "Request an invitation"}
         </Button>
         <p className="text-sm text-white/45">
           No newsletter. We write when there is something to say.
         </p>
       </div>
+
+      {error && (
+        <p role="alert" className="text-sm text-white/80">
+          {error}
+        </p>
+      )}
     </form>
   );
 }
